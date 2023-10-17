@@ -1,5 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// to update the schema run `npx prisma migrate dev --name <name>`
 
 generator client {
   provider = "prisma-client-js"
@@ -11,43 +12,43 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  password  String
-  orders    Order[]
-  cart      Cart?
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  password String
+  orders   Order[]
+  cart     Cart?
+  admin    Boolean @default(false)
 }
 
 model Cart {
-  id        Int      @id @default(autoincrement())
-  user      User?   @relation(fields: [userId], references: [id])
-  userId    Int? @unique
-  items     Item[]
+  id     Int    @id @default(autoincrement())
+  user   User?  @relation(fields: [userId], references: [id])
+  userId Int?   @unique
+  items  Item[]
 }
 
 model Item {
-  id        Int      @id @default(autoincrement())
-  title     String
+  id          Int       @id @default(autoincrement())
+  title       String
   description String
-  price     Float
-  imageUrl  String
-  category  Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  cart      Cart?    @relation(fields: [cartId], references: [id])
-  cartId    Int?
-  order     Order?   @relation(fields: [orderId], references: [id])
-  orderId   Int?
+  price       Float
+  imageUrl    String
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  Int?
+  cart        Cart?     @relation(fields: [cartId], references: [id])
+  cartId      Int?
+  order       Order?    @relation(fields: [orderId], references: [id])
+  orderId     Int?
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String
-  items     Item[]
+  id    Int    @id @default(autoincrement())
+  name  String
+  items Item[]
 }
 
-
-model Order{
+model Order {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
