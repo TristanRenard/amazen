@@ -22,8 +22,10 @@ export default async function getToken(email, password) {
                     expiresIn: '1h',
                 }
             )
+
             return token
         }
     }
+
     return false
 }

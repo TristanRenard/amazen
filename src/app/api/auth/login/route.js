@@ -1,4 +1,3 @@
-import findUser from '@/utils/db/users/findUser'
 import alredytaken from '@/utils/users/alredytaken'
 import getToken from '@/utils/users/getToken'
 
@@ -43,6 +42,7 @@ export async function POST(request) {
 
     try {
         const usertoken = await getToken(email, password)
+
         return Response.json({
             status: 200,
             usertoken,
