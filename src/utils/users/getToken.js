@@ -25,5 +25,4 @@ export default async function getToken(email, password) {
             return token
         }
     }
-    return false
 }

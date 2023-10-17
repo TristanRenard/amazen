@@ -7,7 +7,7 @@ export async function POST(request) {
 
     if (!login) {
         return Response.json({
-            err: 'Bad Request: Missing login object',
+            err: 'Bad Request: Missing login object ',
             status: 400,
         })
     }
@@ -43,9 +43,16 @@ export async function POST(request) {
 
     try {
         const usertoken = await getToken(email, password)
+        // console.log(usertoken)
+        if (usertoken) {
+            return Response.json({
+                status: 200,
+                usertoken,
+            })
+        }
         return Response.json({
-            status: 200,
-            usertoken,
+            status: 400,
+            err: 'Bad Request: Invalid password',
         })
     } catch (err) {
         return Response.json({

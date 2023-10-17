@@ -1,3 +1,4 @@
+import createCart from '@/utils/db/cart/createCart'
 import insertUser from '@/utils/db/users/insertUser'
 import alredytaken from '@/utils/users/alredytaken'
 
@@ -63,6 +64,7 @@ export async function POST(request) {
     //insert user in db
     try {
         const user = await insertUser(username, password, email)
+        const cart = await createCart(user.id)
 
         return Response.json({
             message: 'User created',
