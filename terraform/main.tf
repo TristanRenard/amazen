@@ -28,11 +28,6 @@ resource "docker_container" "amazen" {
   image = docker_image.amazen.image_id
   name  = "amazen"
 
-  ports {
-    internal = 3000
-    external = 80
-  }
-
   labels {
     label = "traefik.enable"
     value = "true"
