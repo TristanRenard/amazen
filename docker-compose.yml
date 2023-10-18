@@ -1,0 +1,115 @@
+version: '3.2'
+
+services:
+    ping:
+        image: prom/blackbox-exporter:latest
+        restart: always
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - '${DOCKER_CONFIG_DIR}/blackbox:/config'
+        tty: true
+        stdin_open: true
+        command:
+            - '--config.file=/config/blackbox.yml'
+        networks:
+            - grafana-network
+
+    nodeexp:
+        image: prom/node-exporter:latest
+        restart: always
+        privileged: true
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        command:
+            - '--path.procfs=/host/proc'
+            - '--path.sysfs=/host/sys'
+            - --collector.filesystem.ignored-mount-points
+            - '^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
+        networks:
+            - grafana-network
+
+    prometheus:
+        image: prom/prometheus:latest
+        restart: always
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - ${DOCKER_CONFIG_DIR}/prometheus/:/etc/prometheus/
+            - prometheus_data:/prometheus
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus'
+            - '--storage.tsdb.retention.time=90d'
+            - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+            - '--web.console.templates=/usr/share/prometheus/consoles'
+        networks:
+            - grafana-network
+            - public-network
+
+    grafana:
+        image: grafana/grafana-oss:latest
+        labels:
+            - 'traefik.enable=true'
+            - 'traefik.http.routers.dashboard-grafana.service=dashboard-grafana'
+            - 'traefik.http.services.dashboard-grafana.loadbalancer.server.port=3000'
+            - 'traefik.http.routers.dashboard-grafana.entrypoints=web, websecure'
+            - 'traefik.http.routers.dashboard-grafana.rule=Host(``)'
+            - 'traefik.http.routers.dashboard-grafana.tls=true'
+            - 'traefik.http.routers.dashboard-grafana.tls.certresolver=production'
+        restart: always
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - grafana_data:/var/lib/grafana
+            - '${DOCKER_CONFIG_DIR}/grafana/provisioning/:/etc/grafana/provisioning/'
+        depends_on:
+            - prometheus
+        networks:
+            - grafana-network
+            - public-network
+
+    traefik:
+        image: traefik:v2.5
+        container_name: traefik
+        networks:
+            - public-network
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - '${DOCKER_CONFIG_DIR}/traefik:/etc/traefik'
+            - /var/log/traefik:/var/log/traefik
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        restart: unless-stopped
+
+    crowdsec:
+        image: crowdsecurity/crowdsec
+        restart: always
+        networks:
+            - public-network
+        depends_on:
+            - traefik
+        environment:
+            COLLECTIONS: 'crowdsecurity/linux crowdsecurity/traefik'
+            GID: '${GID-1000}'
+        volumes:
+            - ${DOCKER_CONFIG_DIR}/crowdsec:/etc/crowdsec
+            - /var/log/auth.log:/logs/auth.log:ro
+            - /var/log/syslog.log:/logs/syslog.log:ro
+            - /var/log/traefik:/var/logs/traefik:ro
+            - crowdsec-db:/var/lib/crowdsec/data/
+
+volumes:
+    prometheus_data:
+    grafana_data:
+    crowdsec-db:
+
+networks:
+    public-network:
+        name: public-network
+        external: true
+
+    grafana-network:
+        name: grafana-network
+        external: true

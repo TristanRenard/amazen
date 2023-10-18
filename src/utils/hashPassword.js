@@ -7,8 +7,9 @@ var bcrypt = require('bcryptjs')
  */
 
 const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10)
-  return bcrypt.hashSync(password, salt)
+    const salt = await bcrypt.genSalt(10)
+
+    return bcrypt.hashSync(password, salt)
 }
 
 export default hashPassword

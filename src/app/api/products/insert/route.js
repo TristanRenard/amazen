@@ -23,6 +23,7 @@ export async function POST(request) {
 
     try {
         const newProduct = await insertProduct(title, price, description, image)
+
         return Response.json({
             status: 200,
         })
