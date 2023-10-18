@@ -1,71 +1,35 @@
-/*
-model User {
-    id       Int     @id @default(autoincrement())
-    email    String  @unique
-    name     String?
-    password String
-    orders   Order[]
-    cart     Cart?
-    admin    Boolean @default(false)
-}
-
-model Cart {
-    id     Int    @id @default(autoincrement())
-    user   User?  @relation(fields: [userId], references: [id])
-    userId Int?   @unique
-    items  Item[]
-}
-
-model Item {
-    id          Int       @id @default(autoincrement())
-    title       String
-    description String
-    price       Float
-    imageUrl    String
-    category    Category? @relation(fields: [categoryId], references: [id])
-    categoryId  Int?
-    cart        Cart?     @relation(fields: [cartId], references: [id])
-    cartId      Int?
-    order       Order?    @relation(fields: [orderId], references: [id])
-    orderId     Int?
-}
-*/
-
+import getAllProductsInCart from '@/utils/db/cart/getAllProductInCart'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-//add item in items in cart
-export default async function insertItemInCart(userid, productid) {
+export default async function insertInCart(token, productid) {
     try {
-        const cart = await prisma.cart.findFirst({
+        //array of product ids
+        let products = await getAllProductsInCart(userid)
+
+        //check if product is already in cart
+        if (products.includes(productid)) {
+            return { error: 'Product is already in cart ' }
+        }
+
+        const newCart = await prisma.cart.update({
             where: {
                 userId: userid,
-            },
-        })
-
-        const item = await prisma.item.findFirst({
-            where: {
-                id: productid,
-            },
-        })
-
-        const cartItem = await prisma.cart.update({
-            where: {
-                id: cart.id,
             },
             data: {
                 items: {
                     connect: {
-                        id: item.id,
+                        id: productid,
                     },
                 },
             },
         })
 
-        return cartItem
+        //add product to cart
+        products += [productid]
+        return products
     } catch (error) {
-        console.log(error)
         return error
     }
 }

@@ -1,11 +1,9 @@
-// import { getAllProductsInCart } from '@/utils/db/cart/getAllProductInCart'
-
-import insertItemInCart from '@/utils/db/cart/insertInCart'
+import insertInCart from '@/utils/db/cart/insertInCart'
 
 export async function POST(request) {
-    const { userid, productid } = request.json()
     try {
-        const products = await insertItemInCart(userid, productid)
+        const { userid, productid } = await request.json()
+        const products = await insertInCart(userid, productid)
         return Response.json({
             status: 200,
             products,
@@ -17,16 +15,3 @@ export async function POST(request) {
         })
     }
 }
-
-/*
-fetch('/api/user/addProductInCart', {
-    method: 'POST',
-    body: JSON.stringify({
-        userid: 4,
-        productid: 1,
-    }),
-})
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.log(err))
-*/

@@ -2,14 +2,17 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export default async function getAllProductsInCart() {
+export default async function getAllProductsInCart(userid) {
     try {
-        const products = await prisma.cart.findMany({
+        const products = await prisma.cart.findFirst({
+            where: {
+                userId: userid,
+            },
             include: {
                 items: true,
             },
         })
-        return products
+        return products.items
     } catch (error) {
         return error
     }

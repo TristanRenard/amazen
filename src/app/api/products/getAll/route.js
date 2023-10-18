@@ -5,7 +5,7 @@ export async function GET() {
         const products = await getAllProducts()
         return Response.json({
             status: 200,
-            productd: products,
+            products: products,
         })
     } catch (err) {
         return Response.json({
