@@ -32,4 +32,38 @@ resource "docker_container" "amazen" {
     internal = 3000
     external = 80
   }
+
+  labels {
+    label = "traefik.enable"
+    value = "true"
+  }
+
+  labels {
+    label = "traefik.http.routers.amazen.service"
+    value = "amazen"
+  }
+
+  labels {
+    label = "traefik.http.services.amazen.loadbalancer.server.port"
+    value = "3000"
+  }
+
+  labels {
+    label = "traefik.http.routers.amazen.entrypoints"
+    value = "web, websecure"
+  }
+
+  labels {
+    label = "traefik.http.routers.amazen.rule"
+    value = "Host(`amazen.fr`)"
+  }
+  labels {
+    label = "traefik.http.routers.amazen.tls"
+    value = "true"
+  }
+
+  labels {
+    label = "traefik.http.routers.amazen.tls.certresolver"
+    value = "production"
+  }
 }
