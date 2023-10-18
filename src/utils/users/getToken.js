@@ -5,6 +5,7 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 export default async function getToken(email, password) {
     const user = await findUser(email)
+    // console.log(user)
 
     if (user) {
         const { password: hash } = user

@@ -58,7 +58,7 @@ export default function Register() {
             body: JSON.stringify(body),
         })
 
-        const data = await res.json()
+        const data = await res
 
         if (data.status === 200) {
             window.location.href = '/login'
