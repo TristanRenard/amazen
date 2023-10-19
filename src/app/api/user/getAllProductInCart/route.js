@@ -1,5 +1,4 @@
 import getAllProductsInCart from '@/utils/db/cart/getAllProductInCart'
-import getAllProducts from '@/utils/db/product/getAllProducts'
 
 export async function POST(request) {
     const { userid } = request.json()
@@ -16,15 +15,3 @@ export async function POST(request) {
         })
     }
 }
-
-/*
-fetch('/api/user/getAllProductInCart', {
-    method: 'POST',
-    body: JSON.stringify({
-        userid: 2,
-    }),
-})
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.log(err))
-*/

@@ -1,15 +1,18 @@
+import jwt from 'jsonwebtoken'
 import findUser from '../db/users/findUser'
-import validatePassword from '../validatePassword'
-require('dotenv').config()
+import { validatePassword } from '../password'
 
-const jwt = require('jsonwebtoken')
+/**
+ *
+ * @param {string} email
+ * @param {string} password
+ * @returns {Promise<string>}
+ */
 export default async function getToken(email, password) {
     const user = await findUser(email)
-    // console.log(user)
 
     if (user) {
-        const { password: hash } = user
-        const isValid = await validatePassword(hash, password)
+        const isValid = await validatePassword(user.password, password)
 
         if (isValid) {
             const token = jwt.sign(

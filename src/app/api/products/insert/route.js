@@ -1,5 +1,4 @@
 import insertProduct from '@/utils/db/product/insertProduct'
-//const jwt = require("jsonwebtoken");
 
 export async function POST(request) {
     const { product } = await request.json()
@@ -25,6 +24,7 @@ export async function POST(request) {
         const newProduct = await insertProduct(title, price, description, image)
         return Response.json({
             status: 200,
+            data: newProduct,
         })
     } catch (err) {
         return Response.json({
@@ -33,22 +33,3 @@ export async function POST(request) {
         })
     }
 }
-/*
-fetch('/api/products/insert', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        product: {
-            title: 'test',
-            price: 10,
-            description: 'test',
-            image: 'test',
-        },
-    }),
-})
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.log(err))
-*/

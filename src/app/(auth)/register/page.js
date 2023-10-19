@@ -1,44 +1,45 @@
 'use client'
 
-import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function Register() {
     const [isOpen, setIsOpen] = useState(false)
     const [error, setError] = useState(null)
-    const [singUp, setSingUp] = useState('Sign up')
+    const [signUp, setSignUp] = useState('Inscription')
+    const router = useRouter()
 
-    const jwt = require('jsonwebtoken')
-
-    //check check if token is defined
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('token')
-        if (token) {
-            const decode = fetch('/api/jwt/verifyToken', {
-                method: 'POST',
-                body: JSON.stringify({
-                    usertoken: localStorage.getItem('token'),
-                }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    if (data.status === 200) {
-                        window.location.href = '/'
-                    } else {
-                        localStorage.removeItem('token')
-                    }
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('token')
+            if (token) {
+                fetch('/api/jwt/verifyToken', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        usertoken: localStorage.getItem('token'),
+                    }),
                 })
-                .catch((err) => console.log(err))
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.status === 200) {
+                            router.push('/')
+                        }
+                        localStorage.removeItem('token')
+                    })
+                    .catch((err) => console.log(err))
+            }
         }
-    }
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setSingUp('Loading...')
+        setSignUp('Loading...')
         const { email, username, password, passwordc } = e.target.elements
 
         if (password.value !== passwordc.value) {
-            alert('Passwords do not match')
+            alert('Les mots de passes ne correspondent pas')
             return
         }
 
@@ -58,15 +59,14 @@ export default function Register() {
             body: JSON.stringify(body),
         })
 
-        const data = await res
+        const data = await res.json()
 
         if (data.status === 200) {
-            window.location.href = '/login'
-        } else {
-            setError(data.err)
-            setIsOpen(true)
-            setSingUp('Sign up')
+            router.push('/login')
         }
+        setError(data.err)
+        setIsOpen(true)
+        setSignUp('Inscription')
     }
 
     return (
@@ -97,7 +97,7 @@ export default function Register() {
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 pt-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <h2 className="mt-5 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        Sign in to your account
+                        Inscription d'un compte
                     </h2>
                 </div>
 
@@ -113,7 +113,7 @@ export default function Register() {
                                 htmlFor="email"
                                 className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                                Email address
+                                Adresse email
                             </label>
                             <div className="mt-0">
                                 <input
@@ -132,7 +132,7 @@ export default function Register() {
                                 htmlFor="first_name"
                                 className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                                Username
+                                Nom d'utilisateur
                             </label>
                             <div className="mt-0">
                                 <input
@@ -151,7 +151,7 @@ export default function Register() {
                                 htmlFor="password"
                                 className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                                Password
+                                Mot de passe
                             </label>
                             <div className="mt-0">
                                 <input
@@ -169,7 +169,7 @@ export default function Register() {
                                 htmlFor="password"
                                 className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                                Confirm password
+                                Confirmer le mot de passe
                             </label>
                             <div className="mt-0">
                                 <input
@@ -187,19 +187,19 @@ export default function Register() {
                                 type="submit"
                                 className="bg-blue-500 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                {singUp}
+                                {signUp}
                             </button>
                         </div>
                     </form>
 
                     <p className="mt-10 text-center text-sm text-gray-500">
-                        Already have an account?{' '}
-                        <a
+                        Vous possèdez déjà un compte?{' '}
+                        <Link
                             href="login"
                             className="font-semibold leading-6 text-primary hover:text-secondary"
                         >
-                            Login
-                        </a>
+                            Connexion
+                        </Link>
                     </p>
                 </div>
             </div>

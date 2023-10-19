@@ -1,13 +1,16 @@
-import findUser from '@/utils/db/users/findUser'
-import alredytaken from '@/utils/users/alredytaken'
 import getToken from '@/utils/users/getToken'
 
+/**
+ *
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
 export async function POST(request) {
     const { login } = await request.json()
 
     if (!login) {
         return Response.json({
-            err: 'Bad Request: Missing login object ',
+            err: 'Bad Request: Missing login object.',
             status: 400,
         })
     }
@@ -21,7 +24,6 @@ export async function POST(request) {
         })
     }
 
-    //verify if email is valid
     const emailRegex = /\S+@\S+\.\S+/
 
     if (!emailRegex.test(email)) {
@@ -31,8 +33,7 @@ export async function POST(request) {
         })
     }
 
-    //verify if email is already taken
-    const isTaken = await alredytaken(email)
+    const isTaken = await emailIsAlreadyTaken(email)
 
     if (!isTaken) {
         return Response.json({
@@ -43,7 +44,6 @@ export async function POST(request) {
 
     try {
         const usertoken = await getToken(email, password)
-        // console.log(usertoken)
         if (usertoken) {
             return Response.json({
                 status: 200,
@@ -61,21 +61,3 @@ export async function POST(request) {
         })
     }
 }
-
-/*
-fetch('/api/auth/login', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        login : {
-            password: 'Password1',
-            email: 'emai@email.com',
-        },
-    }),
-})
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.log(err))
-*/

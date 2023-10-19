@@ -1,6 +1,11 @@
-import createCart from '@/utils/db/cart/createCart'
 import insertUser from '@/utils/db/users/insertUser'
-import alredytaken from '@/utils/users/alredytaken'
+import emailIsAlreadyTaken from '@/utils/users/emailIsAlreadyTaken'
+
+/**
+ *
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
 
 export async function POST(request) {
     const { register } = await request.json()
@@ -21,7 +26,6 @@ export async function POST(request) {
         })
     }
 
-    //verify if password is valid
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/
 
     if (!passwordRegex.test(password)) {
@@ -31,7 +35,6 @@ export async function POST(request) {
         })
     }
 
-    //verify if email is valid
     const emailRegex = /\S+@\S+\.\S+/
 
     if (!emailRegex.test(email)) {
@@ -41,7 +44,6 @@ export async function POST(request) {
         })
     }
 
-    //verify if username is valid
     const usernameRegex = /^[a-zA-Z0-9]+$/
 
     if (!usernameRegex.test(username)) {
@@ -51,8 +53,7 @@ export async function POST(request) {
         })
     }
 
-    //verify if username is already taken
-    const isTaken = await alredytaken(email)
+    const isTaken = await emailIsAlreadyTaken(email)
 
     if (isTaken) {
         return Response.json({
@@ -61,44 +62,17 @@ export async function POST(request) {
         })
     }
 
-    //insert user in db
     try {
-        const user = await insertUser(username, password, email)
-        const cart = await createCart(user.id)
+        await insertUser(username, password, email)
 
         return Response.json({
             message: 'User created',
-            headers: {
-                'Content-Type': 'application/json',
-            },
             status: 200,
         })
     } catch (err) {
         return Response.json({
             err,
-            headers: {
-                'Content-Type': 'application/json',
-            },
             status: 500,
         })
     }
 }
-
-/*
-fetch('/api/auth/register', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        register: {
-            username: 'username',
-            password: 'Password1',
-            email: 'emai@email.com',
-        },
-    }),
-})
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.log(err))
-*/

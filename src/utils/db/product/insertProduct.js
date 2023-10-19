@@ -1,6 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
+/**
+ *
+ * @param {string} title
+ * @param {number} price
+ * @param {string} description
+ * @param {string} imageUrl
+ * @returns {Promise}
+ */
 export default async function insertProduct(
     title,
     price,

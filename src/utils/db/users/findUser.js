@@ -1,17 +1,26 @@
 import { PrismaClient } from '@prisma/client'
-import hashPassword from '@/utils/hashPassword'
 
 const prisma = new PrismaClient()
+/**
+ *
+ * @param {string} email
+ * @returns {Promise}
+ */
 export default async function findUser(email) {
-    const user = await prisma.user.findFirst({
-        where: {
-            email,
-        },
-    })
+    try {
+        const user = await prisma.user.findFirst({
+            where: {
+                email,
+            },
+        })
 
-    if (user) {
-        return user
+        if (user) {
+            return user
+        }
+
+        return false
+    } catch (error) {
+        console.error(error)
+        return false
     }
-
-    return false
 }

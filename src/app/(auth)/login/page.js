@@ -1,39 +1,45 @@
 'use client'
 
-import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function Login() {
     const [isOpen, setIsOpen] = useState(false)
     const [error, setError] = useState(null)
-    const [singUp, setSingUp] = useState('Sign up')
+    const [signIn, setSignIn] = useState('Connexion')
+    const router = useRouter()
 
-    const jwt = require('jsonwebtoken')
-
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('token')
-        if (token) {
-            const decode = fetch('/api/jwt/verifyToken', {
-                method: 'POST',
-                body: JSON.stringify({
-                    usertoken: localStorage.getItem('token'),
-                }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    if (data.status === 200) {
-                        window.location.href = '/'
-                    } else {
-                        localStorage.removeItem('token')
-                    }
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const token = localStorage.getItem('token')
+            if (token) {
+                fetch('/api/jwt/verifyToken', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        usertoken: localStorage.getItem('token'),
+                    }),
                 })
-                .catch((err) => console.log(err))
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data.status === 200) {
+                            router.push('/')
+                        }
+                        localStorage.removeItem('token')
+                    })
+                    .catch((err) => console.log(err))
+            }
         }
-    }
+    }, [])
 
+    /**
+     *
+     * @param {HTMLFormElement} e
+     */
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setSingUp('Loading...')
+        setSignIn('Chargement...')
         const { email, password } = e.target.elements
 
         const body = {
@@ -51,25 +57,19 @@ export default function Login() {
             body: JSON.stringify(body),
         })
 
-        //
-
         const data = await res.json()
 
         if (data.status === 200) {
-            console.log(data.usertoken)
-            if (data.usertoken !== false) {
+            if (!data.usertoken) {
                 localStorage.setItem('token', data.usertoken)
-                window.location.href = '/'
-            } else {
-                setError('Wrong password')
-                setIsOpen(true)
-                setSingUp('Log in')
+                router.push('/')
             }
-        } else {
-            setError(data.err)
+            setError('Mauvais mot de passe')
             setIsOpen(true)
-            setSingUp('Log in')
+            setSignIn('Connexion')
         }
+        setError(data.err)
+        setIsOpen(true)
     }
 
     return (
@@ -82,7 +82,7 @@ export default function Login() {
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
                     <Dialog.Panel className="w-full max-w-md rounded bg-white border px-16 py-10 border-black">
                         <Dialog.Title className="text-black font-bold text-lg">
-                            Error :
+                            Erreur :
                         </Dialog.Title>
 
                         <Dialog.Description className="text-black">
@@ -100,7 +100,7 @@ export default function Login() {
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        Sign in to your account
+                        Connexion vers votre compte
                     </h2>
                 </div>
 
@@ -116,7 +116,7 @@ export default function Login() {
                                 htmlFor="email"
                                 className="block text-sm font-medium leading-6 text-gray-900"
                             >
-                                Email address
+                                Adresse Email
                             </label>
                             <div className="mt-2">
                                 <input
@@ -136,15 +136,15 @@ export default function Login() {
                                     htmlFor="password"
                                     className="block text-sm font-medium leading-6 text-gray-900"
                                 >
-                                    Password
+                                    Mot de passe
                                 </label>
                                 <div className="text-sm">
-                                    <a
+                                    <Link
                                         href="#"
                                         className="font-semibold text-primary hover:text-secondary text-blue-500"
                                     >
-                                        Forgot password?
-                                    </a>
+                                        Mot de passe oublié?
+                                    </Link>
                                 </div>
                             </div>
                             <div className="mt-2">
@@ -159,24 +159,22 @@ export default function Login() {
                             </div>
                         </div>
 
-                        <div>
-                            <button
-                                type="submit"
-                                className="bg-blue-500 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            >
-                                Sign in
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            className="bg-blue-500 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        >
+                            {signIn}
+                        </button>
                     </form>
 
                     <p className="mt-10 text-center text-sm text-gray-500">
-                        Not a member?{' '}
-                        <a
+                        Vous n'êtes pas membre?{' '}
+                        <Link
                             href="register"
                             className="font-semibold leading-6 text-primary hover:text-secondary"
                         >
-                            Register here.
-                        </a>
+                            Inscription.
+                        </Link>
                     </p>
                 </div>
             </div>

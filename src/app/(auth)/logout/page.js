@@ -1,10 +1,15 @@
 'use client'
+
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
 export default function Logout() {
-    localStorage.removeItem('token')
-    window.location.href = '/login'
-    return (
-        <>
-            <h1>Logout</h1>
-        </>
-    )
+    const router = useRouter()
+
+    useEffect(() => {
+        localStorage.removeItem('token')
+        router.push('/login')
+    }, [])
+
+    return <h1>Logout</h1>
 }

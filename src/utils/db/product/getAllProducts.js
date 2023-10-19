@@ -1,11 +1,16 @@
 import { PrismaClient } from '@prisma/client'
+
 const prisma = new PrismaClient()
 
+/**
+ *
+ * @returns {Promise}
+ */
 export default async function getAllProducts() {
     try {
-        const products = await prisma.item.findMany()
-        return products
+        return await prisma.item.findMany()
     } catch (error) {
-        return error
+        console.error(error)
+        return []
     }
 }
