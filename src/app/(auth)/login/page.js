@@ -89,7 +89,7 @@ export default function Login() {
                             {error}
                         </Dialog.Description>
                         <button
-                            className="bg-blue-500 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-8"
+                            className="bg-emerald-600 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 mt-8"
                             onClick={() => setIsOpen(false)}
                         >
                             Cancel
@@ -125,7 +125,7 @@ export default function Login() {
                                     type="email"
                                     autoComplete="email"
                                     required
-                                    className="p-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="p-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-800 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -141,7 +141,7 @@ export default function Login() {
                                 <div className="text-sm">
                                     <a
                                         href="#"
-                                        className="font-semibold text-primary hover:text-secondary text-blue-500"
+                                        className="font-semibold text-primary hover:text-secondary text-emerald-600"
                                     >
                                         Forgot password?
                                     </a>
@@ -154,7 +154,7 @@ export default function Login() {
                                     type="password"
                                     autoComplete="current-password"
                                     required
-                                    className="p-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="p-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-800 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -162,7 +162,7 @@ export default function Login() {
                         <div>
                             <button
                                 type="submit"
-                                className="bg-blue-500 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                className="bg-emerald-600 flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
                             >
                                 Sign in
                             </button>

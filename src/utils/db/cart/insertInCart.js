@@ -3,7 +3,8 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export default async function insertInCart(token, productid) {
+export default async function insertInCart(userid, productid) {
+    console.log(userid, productid)
     try {
         //array of product ids
         let products = await getAllProductsInCart(userid)
@@ -25,7 +26,7 @@ export default async function insertInCart(token, productid) {
                 },
             },
         })
-
+        console.log(newCart)
         //add product to cart
         products += [productid]
         return products
